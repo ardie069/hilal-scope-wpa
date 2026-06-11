@@ -27,22 +27,25 @@ export default function HijriPrediction({
   // Evaluasi warna parameter berdasarkan metode
   let altWarning = false;
   let altDanger = false;
-  let elongWarning = false;
+  const elongWarning = false;
   let elongDanger = false;
+  let elongGeoWarning = false;
+  let elongGeoDanger = false;
 
   const alt = prediction.altitude;
   const elong = prediction.elongation;
+  const elongGeo = prediction.elongation_geo ?? elong;
 
   if (method === "MABIMS") {
     const altFails = alt < 3.0; // MABIMS minimal 3 derajat
-    const elongFails = elong < 6.4; // MABIMS minimal 6.4 derajat
+    const elongGeoFails = elongGeo < 6.4; // MABIMS minimal 6.4 derajat
 
     if (isLocal && referencePassed) {
       if (altFails) altWarning = true;
-      if (elongFails) elongWarning = true;
+      if (elongGeoFails) elongGeoWarning = true;
     } else {
       if (altFails) altDanger = true;
-      if (elongFails) elongDanger = true;
+      if (elongGeoFails) elongGeoDanger = true;
     }
   } else if (method === "KHGT") {
     if (alt < 5.0) altDanger = true; // KHGT minimal 5 derajat
@@ -52,6 +55,7 @@ export default function HijriPrediction({
       // Umm al-Qura jika tidak memenuhi syarat maka keduanya merah
       altDanger = true;
       elongDanger = true;
+      elongGeoDanger = true;
     }
   }
 
@@ -179,17 +183,17 @@ export default function HijriPrediction({
                 isWarning={altWarning}
               />
               <Stat
-                label="Elongasi Toposentris"
+                label={method === "KHGT" ? "Elongasi" : "Elongasi Toposentris"}
                 value={formatDegreeDMS(prediction.elongation)}
                 isDanger={elongDanger}
                 isWarning={elongWarning}
               />
-              {prediction.elongation_geo !== undefined && (
+              {prediction.elongation_geo !== undefined && method !== "KHGT" && (
                 <Stat
                   label="Elongasi Geosentris"
                   value={formatDegreeDMS(prediction.elongation_geo)}
-                  isDanger={elongDanger}
-                  isWarning={elongWarning}
+                  isDanger={elongGeoDanger}
+                  isWarning={elongGeoWarning}
                 />
               )}
             </div>
