@@ -79,16 +79,22 @@ export default function HijriDate({
                     <p className="text-[9px] uppercase font-bold text-gray-400 mb-4 tracking-widest border-b border-gray-100 dark:border-white/5 pb-2">
                       Lokasi Anda
                     </p>
-                    <div className="grid grid-cols-2 gap-6 sm:gap-10">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-10">
                       <Stat
                         label="Tinggi Hilal"
                         value={`${methodResult.current_altitude?.toFixed(2)}°`}
                         isPrimary
                       />
                       <Stat
-                        label="Jarak Elongasi"
+                        label="Elongasi Toposentris"
                         value={`${methodResult.current_elongation?.toFixed(2)}°`}
                       />
+                      {methodResult.current_elongation_geo !== undefined && (
+                        <Stat
+                          label="Elongasi Geosentris"
+                          value={`${methodResult.current_elongation_geo?.toFixed(2)}°`}
+                        />
+                      )}
                     </div>
                   </div>
                   
@@ -96,30 +102,42 @@ export default function HijriDate({
                     <p className="text-[9px] uppercase font-bold text-gray-400 mb-4 tracking-widest border-b border-gray-100 dark:border-white/5 pb-2">
                       Titik Referensi (Sabang)
                     </p>
-                    <div className="grid grid-cols-2 gap-6 sm:gap-10">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-10">
                       <Stat
                         label="Tinggi Hilal"
                         value={`${methodResult.reference_altitude?.toFixed(2)}°`}
                         isPrimary
                       />
                       <Stat
-                        label="Jarak Elongasi"
+                        label="Elongasi Toposentris"
                         value={`${methodResult.reference_elongation?.toFixed(2)}°`}
                       />
+                      {methodResult.reference_elongation_geo !== undefined && (
+                        <Stat
+                          label="Elongasi Geosentris"
+                          value={`${methodResult.reference_elongation_geo?.toFixed(2)}°`}
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-6 sm:gap-10">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-10">
                   <Stat
                     label="Tinggi Hilal"
                     value={`${methodResult.current_altitude?.toFixed(2)}°`}
                     isPrimary
                   />
                   <Stat
-                    label="Jarak Elongasi"
+                    label="Elongasi Toposentris"
                     value={`${methodResult.current_elongation?.toFixed(2)}°`}
                   />
+                  {methodResult.current_elongation_geo !== undefined && (
+                    <Stat
+                      label="Elongasi Geosentris"
+                      value={`${methodResult.current_elongation_geo?.toFixed(2)}°`}
+                    />
+                  )}
                 </div>
               )}
             </div>

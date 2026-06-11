@@ -30,6 +30,7 @@ export default function MoonInfoPage() {
               age={(data?.age_hours ?? 0) / 24}
               distance={data?.distance_km ?? 0}
               elongation={data?.elongation ?? 0}
+              elongationGeo={data?.elongation_geo}
               altitude={data?.altitude ?? 0}
               moonrise={data?.moonrise}
               moonset={data?.moonset}

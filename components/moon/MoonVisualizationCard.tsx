@@ -11,6 +11,7 @@ interface MoonVisualizationProps {
   age: number;
   distance: number;
   elongation: number;
+  elongationGeo?: number;
   altitude: number;
   moonrise?: string;
   moonset?: string;
@@ -23,6 +24,7 @@ export default function MoonVisualizationCard({
   age = 0,
   distance = 0,
   elongation = 0,
+  elongationGeo,
   altitude = 0,
   moonrise,
   moonset,
@@ -114,7 +116,7 @@ export default function MoonVisualizationCard({
               <Metric
                 label="Jarak Sudut"
                 value={formatDegreeDMS(elongation)}
-                sub="Elongasi"
+                sub="Elongasi Toposentris"
               />
             </div>
           </div>
@@ -155,7 +157,7 @@ export default function MoonVisualizationCard({
           icon={<Radius />}
           label="Sudut Elongasi"
           value={formatDegreeDMS(elongation)}
-          desc="Jarak sudut antara bulan dan matahari."
+          desc={elongationGeo !== undefined ? `Geosentris: ${formatDegreeDMS(elongationGeo)}` : "Jarak sudut antara bulan dan matahari."}
           footer="Data Toposentris"
           progress={100}
         />

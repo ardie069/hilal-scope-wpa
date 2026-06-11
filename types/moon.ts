@@ -4,6 +4,7 @@ export interface MoonTelemetry {
   altitude_apparent?: number;
   azimuth: number;
   elongation: number;
+  elongation_geo?: number;
   illumination: number;
   distance_km: number;
   age_hours: number;

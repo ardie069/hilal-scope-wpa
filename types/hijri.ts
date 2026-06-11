@@ -23,6 +23,7 @@ export interface HilalPrediction {
   altitude: number;
   altitude_apparent?: number;
   elongation: number;
+  elongation_geo?: number;
   age_hours: number;
   location?: LocationInfo;
   khgt_global_valid?: boolean;
@@ -36,8 +37,10 @@ export interface MethodResult {
   hijri_date: HijriDate;
   current_altitude?: number;
   current_elongation?: number;
+  current_elongation_geo?: number;
   reference_altitude?: number;
   reference_elongation?: number;
+  reference_elongation_geo?: number;
   prediction?: HilalPrediction;
   local_prediction?: HilalPrediction;
 }

@@ -170,7 +170,7 @@ export default function HijriPrediction({
         {/* Telemetry Grid */}
         {!isArithmetic && (
           <div className="pt-8 border-t border-gray-100 dark:border-white/5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-8">
               <Stat
                 label="Ketinggian Hilal"
                 value={formatDegreeDMS(prediction.altitude)}
@@ -179,11 +179,19 @@ export default function HijriPrediction({
                 isWarning={altWarning}
               />
               <Stat
-                label="Elongasi"
+                label="Elongasi Toposentris"
                 value={formatDegreeDMS(prediction.elongation)}
                 isDanger={elongDanger}
                 isWarning={elongWarning}
               />
+              {prediction.elongation_geo !== undefined && (
+                <Stat
+                  label="Elongasi Geosentris"
+                  value={formatDegreeDMS(prediction.elongation_geo)}
+                  isDanger={elongDanger}
+                  isWarning={elongWarning}
+                />
+              )}
             </div>
 
             {prediction.altitude_apparent !== undefined && (
