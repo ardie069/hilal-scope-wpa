@@ -1,4 +1,4 @@
-import type { HijriAPIResponse } from "@/types/hijri";
+import type { HijriAPIResponse, HijriCalendarMonth, VisibilityMapData, HijriSearchResult } from "@/types/hijri";
 import { request } from "./client";
 
 /**
@@ -28,7 +28,7 @@ export function fetchHijriCalendar(
     method,
   });
 
-  return request<{ status: string; data: { months: unknown[] } }>(
+  return request<{ status: string; data: { months: HijriCalendarMonth[] } }>(
     `/api/v4/hijri/calendar?${params}`,
   );
 }
@@ -39,14 +39,14 @@ export function fetchVisibilityMap(date: string, method: string) {
     method,
   });
 
-  return request<{ status: string; data: unknown }>(
+  return request<{ status: string; data: VisibilityMapData }>(
     `/api/v4/hijri/visibility-map?${params}`,
   );
 }
 
 export function fetchHijriSearch(date: string) {
   const params = new URLSearchParams({ date });
-  return request<{ status: string; data: unknown }>(
+  return request<{ status: string; data: HijriSearchResult }>(
     `/api/v4/hijri/search?${params}`,
   );
 }

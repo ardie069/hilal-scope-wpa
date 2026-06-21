@@ -58,6 +58,46 @@ export interface HijriAPIResponse {
   data: HijriResponse;
 }
 
+/** Match Go: search result data */
+export interface HijriSearchResult {
+  hijri_date?: {
+    day: number;
+    month_name: string;
+    year: number;
+  };
+}
+
+/** Match Go: models.VisibilityPoint */
+export interface VisibilityPoint {
+  lat: number;
+  lon: number;
+  category: string;
+  alt: number;
+  elong: number;
+  arcv: number;
+  width: number;
+  sunset_utc: number;
+}
+
+/** Match Go: visibility map response data */
+export interface VisibilityMapData {
+  points: VisibilityPoint[];
+  best_location?: { latitude: number; longitude: number };
+  ijtima_time?: string;
+  fajar_nz_time?: string;
+  month_name?: string;
+  year?: number;
+}
+
+/** Match Go: models.HijriMonth (calendar endpoint) */
+export interface HijriCalendarMonth {
+  month_id: number;
+  month_name: string;
+  total_days: number;
+  day_1_weekday: number;
+  start_gregorian: string;
+}
+
 /** Backend method keys */
 export type MethodKey =
   | "TABULAR"

@@ -25,7 +25,7 @@ export default function CallyCalendar({
   children,
   className 
 }: CallyCalendarProps) {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLElement & { value: string }>(null);
 
   useEffect(() => {
     const el = ref.current;

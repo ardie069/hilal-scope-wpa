@@ -93,7 +93,7 @@ export default function SearchClient() {
 
       {result && (
         <div className="bg-white/40 dark:bg-card-dark/40 backdrop-blur-3xl p-8 sm:p-10 rounded-[2rem] border border-white/40 dark:border-white/5 shadow-soft animate-in slide-in-from-bottom-8 duration-700 w-full relative overflow-hidden group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 to-emerald-500/5 rounded-3xl blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
+          <div className="absolute -inset-1 bg-linear-to-r from-primary/10 to-emerald-500/5 rounded-3xl blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
           
           <div className="relative flex flex-col items-center justify-center text-center gap-6">
             <div className="px-4 py-1.5 rounded-full border bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest">
