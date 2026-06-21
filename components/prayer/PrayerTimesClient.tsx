@@ -1,17 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useTheme } from "@/context/theme-context";
+
 import { useMounted } from "@/hooks/use-mounted";
 import { usePrayer } from "@/hooks/use-prayer";
 import { formatCoordinates } from "@/lib/utils/maps";
 
 export default function PrayerTimesClient() {
-  const { darkMode } = useTheme();
   const mounted = useMounted();
   const [method, setMethod] = useState("KEMENAG");
 
-  const { data, loading, error, lat, lon } = usePrayer(undefined, method);
+  const { data, loading, error } = usePrayer(undefined, method);
 
   if (!mounted) {
     return <div className="min-h-screen bg-background-light" />;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Moon, Sun } from "lucide-react";
 import Clock from "@/components/Clock";
 import Method from "@/components/Method";
 import HijriDate from "@/components/HijriDate";
@@ -37,7 +38,7 @@ export default function HomeClient() {
       <header className="space-y-4">
         <div className="flex items-center gap-4">
           <span className="text-4xl sm:text-5xl md:text-6xl drop-shadow-md">
-            {darkMode ? "🌙" : "🕌"}
+            {darkMode ? <Moon size={48} className="text-white" /> : <Sun size={48} className="text-gray-900" />}
           </span>
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tighter text-gray-900 dark:text-white transition-colors duration-500">
             Hilal Scope
@@ -93,10 +94,10 @@ export default function HomeClient() {
 function InfoBlock({ label, value }: { label: string; value: string }) {
   return (
     <div className="border border-gray-100 dark:border-gray-800 rounded-2xl p-4 bg-gray-50/50 dark:bg-white/5 transition-colors duration-500">
-      <span className="block text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">
+      <span className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
         {label}
       </span>
-      <span className="font-bold text-xs text-gray-900 dark:text-white block truncate">
+      <span className="font-bold text-sm text-gray-900 dark:text-white block truncate">
         {value}
       </span>
     </div>
@@ -117,18 +118,12 @@ function SelectionUI({
   return (
     <div className="rounded-2xl p-6 sm:p-8 shadow-card border transition-all duration-500 bg-card-light dark:bg-card-dark dark:text-white border-gray-100 dark:border-gray-800 shadow-gray-200/50 dark:shadow-emerald-500/5">
       <div className="mb-8">
-        <h3 className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6">
-          Metode Perhitungan
-        </h3>
         <Method value={selectedMethod} onChange={setSelectedMethod} />
       </div>
 
       <div className="w-full border-t border-gray-100 dark:border-gray-800 mb-8 border-dashed" />
 
       <div className="space-y-4">
-        <h3 className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">
-          Detail Sistem
-        </h3>
         <div className="grid grid-cols-2 gap-4">
           <InfoBlock label="Zona Waktu" value={userTimezone} />
           <InfoBlock label="Kriteria" value={methodLabels[selectedMethod]} />

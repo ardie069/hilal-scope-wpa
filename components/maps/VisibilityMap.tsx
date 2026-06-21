@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Tooltip, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface VisibilityPoint {
   lat: number;
@@ -55,20 +56,7 @@ const KHGT_CONFIG = {
   }
 };
 
-function getCategory(method: string, h: number, elongation: number): string {
-  if (method === "ODEH") {
-    // Standard Odeh (2006)
-    // Crescent width w (arcminutes) approximated from elongation
-    const w = 15.5 * (1.0 - Math.cos(elongation * Math.PI / 180.0));
-    const v = elongation - (11.837 - 6.322 * w + 0.7319 * w * w - 0.1018 * w * w * w);
-    if (v > 5.65) return "A";
-    if (v > 2.0) return "B";
-    if (v > 0.0) return "C";
-    return "D";
-  }
 
-  return "F";
-}
 
 // --- Binary search helper ---
 function findLowerIndex(arr: number[], val: number, descending: boolean): number {
@@ -92,9 +80,10 @@ function findLowerIndex(arr: number[], val: number, descending: boolean): number
 
 // --- CANVAS OVERLAY COMPONENT ---
 
-function VisibilityCanvasLayer({ points, method }: { points: VisibilityPoint[], method: string }) {
+function VisibilityCanvasLayer({ points, method }: { points: VisibilityPoint[]; method: string }) {
   const map = useMap();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [smartLabels, setSmartLabels] = useState<{ x: number, y: number, text: string, color: string, rotation: number }[]>([]);
 
   const { grid, lats, lons } = useMemo(() => {
@@ -114,28 +103,40 @@ function VisibilityCanvasLayer({ points, method }: { points: VisibilityPoint[], 
     if (!canvasRef.current || lats.length < 2 || lons.length < 2) return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!canvas) return;
 
     const size = map.getSize();
-    canvas.width = size.x;
-    canvas.height = size.y;
+    const dpr = window.devicePixelRatio || 1;
+    const physicalWidth = Math.floor(size.x * dpr);
+    const physicalHeight = Math.floor(size.y * dpr);
+
+    if (canvas.width !== physicalWidth || canvas.height !== physicalHeight) {
+      canvas.width = physicalWidth;
+      canvas.height = physicalHeight;
+    }
+
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return;
     
     // Explicitly clear to prevent ghosting between methods
-    ctx.clearRect(0, 0, size.x, size.y);
+    ctx.clearRect(0, 0, physicalWidth, physicalHeight);
 
-    const imgData = ctx.createImageData(size.x, size.y);
+    const imgData = ctx.createImageData(physicalWidth, physicalHeight);
     const data = imgData.data;
-    const step = 2; // High precision grid
+    const cssStep = 2; // High precision grid in CSS pixels
+    const step = Math.max(1, Math.round(cssStep * dpr));
 
     // Track points for labels
-    let altLine: any = null;
-    let elongLine: any = null;
-    let sunsetLine: any = null;
+    let altLine: { x: number; y: number } | null = null;
+    let elongLine: { x: number; y: number } | null = null;
+    let sunsetLine: { x: number; y: number } | null = null;
 
-    for (let x = 0; x < size.x; x += step) {
-      for (let y = 0; y < size.y; y += step) {
-        const latLng = map.containerPointToLatLng([x, y]);
+    for (let px = 0; px < physicalWidth; px += step) {
+      for (let py = 0; py < physicalHeight; py += step) {
+        const cssX = px / dpr;
+        const cssY = py / dpr;
+
+        const latLng = map.containerPointToLatLng([cssX, cssY]);
         const lat = latLng.lat;
         const lon = latLng.lng;
 
@@ -174,7 +175,7 @@ function VisibilityCanvasLayer({ points, method }: { points: VisibilityPoint[], 
         let sunsetUtc = Math.atan2(sAvg, cAvg) / toRad;
         if (sunsetUtc < 0) sunsetUtc += 24;
 
-        const config = (method === "KHGT" ? KHGT_CONFIG : ODEH_CONFIG) as any;
+        const config = (method === "KHGT" ? KHGT_CONFIG : ODEH_CONFIG) as { colors: Record<string, [number, number, number]> };
         let r = 0, g = 0, b = 0, a = 0;
 
         if (method === "KHGT") {
@@ -186,17 +187,17 @@ function VisibilityCanvasLayer({ points, method }: { points: VisibilityPoint[], 
           // Render Lines (Grid boundaries) - Decoupled for better label capture
           if (altDist < 0.12) {
              r = 239; g = 68; b = 68; a = 255;
-             if (x > size.x * 0.15 && x < size.x * 0.25 && !altLine) altLine = { x, y };
+             if (cssX > size.x * 0.15 && cssX < size.x * 0.25 && !altLine) altLine = { x: cssX, y: cssY };
           } 
           
           if (elongDist < 0.12 && a === 0) {
              r = 0; g = 0; b = 0; a = 255; 
-             if (x > size.x * 0.4 && x < size.x * 0.5 && !elongLine) elongLine = { x, y };
+             if (cssX > size.x * 0.4 && cssX < size.x * 0.5 && !elongLine) elongLine = { x: cssX, y: cssY };
           } 
           
           if ((sunsetDist < 0.08 || Math.abs(sunsetDist - 24) < 0.08) && a === 0) {
              r = 249; g = 115; b = 22; a = 255; 
-             if (x > size.x * 0.6 && x < size.x * 0.7 && !sunsetLine) sunsetLine = { x, y };
+             if (cssX > size.x * 0.6 && cssX < size.x * 0.7 && !sunsetLine) sunsetLine = { x: cssX, y: cssY };
           }
 
           // Shading for KHGT: Pixel-level calculation for perfect oval
@@ -262,11 +263,11 @@ function VisibilityCanvasLayer({ points, method }: { points: VisibilityPoint[], 
         }
 
         if (a > 0) {
-          const startX = x, startY = y;
-          const endX = Math.min(x + step, size.x);
-          const endY = Math.min(y + step, size.y);
+          const startX = px, startY = py;
+          const endX = Math.min(px + step, physicalWidth);
+          const endY = Math.min(py + step, physicalHeight);
           for (let dy = startY; dy < endY; dy++) {
-            const rowOffset = dy * size.x;
+            const rowOffset = dy * physicalWidth;
             for (let dx = startX; dx < endX; dx++) {
               const idx = (rowOffset + dx) * 4;
               data[idx] = r; data[idx + 1] = g; data[idx + 2] = b; data[idx + 3] = a;
@@ -288,15 +289,53 @@ function VisibilityCanvasLayer({ points, method }: { points: VisibilityPoint[], 
   }, [map, grid, lats, lons, method]);
 
   useEffect(() => {
-    render();
-    map.on("moveend", render);
-    return () => { map.off("moveend", render); };
+    let panStartCenter = map.project(map.getCenter(), map.getZoom());
+    let panStartZoom = map.getZoom();
+
+    const handleMoveStart = () => {
+       panStartCenter = map.project(map.getCenter(), map.getZoom());
+       panStartZoom = map.getZoom();
+    };
+
+    const handleMove = () => {
+       const wrapper = wrapperRef.current;
+       if (!wrapper) return;
+       if (map.getZoom() !== panStartZoom) {
+          wrapper.style.opacity = '0';
+          return;
+       }
+       wrapper.style.opacity = '1';
+       const currentPoint = map.project(map.getCenter(), panStartZoom);
+       const dx = panStartCenter.x - currentPoint.x;
+       const dy = panStartCenter.y - currentPoint.y;
+       wrapper.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+    };
+
+    const handleMoveEnd = () => {
+       const wrapper = wrapperRef.current;
+       if (wrapper) {
+          wrapper.style.opacity = '1';
+          wrapper.style.transform = 'translate3d(0px, 0px, 0px)';
+       }
+       render();
+    };
+
+    setTimeout(render, 0);
+    map.on("movestart", handleMoveStart);
+    map.on("move", handleMove);
+    map.on("moveend", handleMoveEnd);
+
+    return () => { 
+       map.off("movestart", handleMoveStart);
+       map.off("move", handleMove);
+       map.off("moveend", handleMoveEnd);
+    };
   }, [map, render]);
 
   return (
-    <>
-      <canvas ref={canvasRef} className="absolute top-0 left-0 pointer-events-none z-[400]" style={{ width: '100%', height: '100%' }} />
-      <div className="absolute inset-0 pointer-events-none z-[500] overflow-hidden">
+    <div ref={wrapperRef} className="absolute inset-0 pointer-events-none z-[400] transition-opacity duration-300">
+      <canvas ref={canvasRef} className="absolute inset-0 opacity-80" style={{ width: '100%', height: '100%' }} />
+      <div className="absolute inset-0 overflow-hidden">
         {smartLabels.map((l, idx) => (
           <div 
             key={idx}
@@ -311,7 +350,7 @@ function VisibilityCanvasLayer({ points, method }: { points: VisibilityPoint[], 
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -340,10 +379,8 @@ function Legend({ method }: { method: string }) {
 // --- MAIN ---
 
 export default function VisibilityMap({ points, method, bestLocation }: VisibilityMapProps) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  const mounted = useMounted();
   if (!mounted) return <div className="w-full h-[400px] sm:h-[650px] bg-gray-100 animate-pulse rounded-3xl" />;
-  const config = method === "KHGT" ? KHGT_CONFIG : ODEH_CONFIG;
 
   return (
     <div className="relative w-full h-[400px] sm:h-[650px] rounded-none sm:rounded-[2rem] overflow-hidden sm:border-2 border-gray-200 shadow-2xl">

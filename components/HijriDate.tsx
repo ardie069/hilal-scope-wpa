@@ -66,9 +66,9 @@ export default function HijriDate({
 
           <div className="relative overflow-hidden bg-white/40 dark:bg-card-dark/40 backdrop-blur-2xl rounded-2xl border border-white/40 dark:border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] transition-all hover:shadow-primary/5">
             <div className="p-4 sm:p-6 md:p-8">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="h-1 w-8 bg-primary rounded-full"></div>
-                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-2 w-2 bg-primary rounded-full"></div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white">
                   {method === "UMM_AL_QURA" ? "Data Astronomi Makkah" : "Data Astronomi Real-time"}
                 </h3>
               </div>
@@ -76,7 +76,7 @@ export default function HijriDate({
               {method === "MABIMS" && methodResult.reference_altitude !== undefined ? (
                 <div className="flex flex-col gap-8">
                   <div>
-                    <p className="text-[9px] uppercase font-bold text-gray-400 mb-4 tracking-widest border-b border-gray-100 dark:border-white/5 pb-2">
+                    <p className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 border-b border-gray-100 dark:border-white/5 pb-2">
                       Lokasi Anda
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-10">
@@ -99,7 +99,7 @@ export default function HijriDate({
                   </div>
                   
                   <div>
-                    <p className="text-[9px] uppercase font-bold text-gray-400 mb-4 tracking-widest border-b border-gray-100 dark:border-white/5 pb-2">
+                    <p className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 border-b border-gray-100 dark:border-white/5 pb-2">
                       Titik Referensi (Sabang)
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-10">
@@ -182,11 +182,11 @@ export default function HijriDate({
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-              <p className="text-[10px] font-black dark:text-primary-content text-base-content/60 uppercase tracking-[0.25em]">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 Sinkronisasi
               </p>
-              <div className="hidden sm:block h-3 w-px bg-base-content/10"></div>
-              <p className="text-[10px] font-bold text-primary uppercase tracking-widest">
+              <div className="hidden sm:block h-3 w-px bg-gray-300 dark:bg-gray-700"></div>
+              <p className="text-sm font-medium text-primary">
                 Terakhir Diperbarui: {formatGeneratedTime(gregorianDate)}
               </p>
             </div>
@@ -212,7 +212,7 @@ function Stat({
         <div
           className={`w-1 h-3 rounded-full ${isPrimary ? "bg-primary" : "bg-gray-200 dark:bg-white/20"}`}
         ></div>
-        <p className="text-[9px] font-black opacity-40 uppercase tracking-[0.2em]">
+        <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
           {label}
         </p>
       </div>

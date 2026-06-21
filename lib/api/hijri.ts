@@ -28,7 +28,7 @@ export function fetchHijriCalendar(
     method,
   });
 
-  return request<{ status: string; data: { months: any[] } }>(
+  return request<{ status: string; data: { months: unknown[] } }>(
     `/api/v4/hijri/calendar?${params}`,
   );
 }
@@ -39,14 +39,14 @@ export function fetchVisibilityMap(date: string, method: string) {
     method,
   });
 
-  return request<{ status: string; data: any }>(
+  return request<{ status: string; data: unknown }>(
     `/api/v4/hijri/visibility-map?${params}`,
   );
 }
 
 export function fetchHijriSearch(date: string) {
   const params = new URLSearchParams({ date });
-  return request<{ status: string; data: any }>(
+  return request<{ status: string; data: unknown }>(
     `/api/v4/hijri/search?${params}`,
   );
 }

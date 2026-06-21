@@ -31,9 +31,9 @@ declare global {
 declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      "calendar-date": any;
-      "calendar-month": any;
-      "calendar-range": any;
+      "calendar-date": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "calendar-month": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "calendar-range": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
     }
   }
 }

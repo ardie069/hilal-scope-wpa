@@ -9,18 +9,14 @@ interface HijriMonth {
 }
 
 interface MapControlsProps {
-  date: string;
   method: string;
-  onDateChange: (date: string) => void;
   onMethodChange: (method: string) => void;
   isLoading: boolean;
   hijriMonths: HijriMonth[];
 }
 
 export default function MapControls({
-  date,
   method,
-  onDateChange,
   onMethodChange,
   isLoading,
   hijriMonths,

@@ -4,12 +4,20 @@ import { useState } from "react";
 import { fetchHijriSearch } from "@/lib/api/hijri";
 import { useMounted } from "@/hooks/use-mounted";
 
+interface SearchResult {
+  hijri_date?: {
+    day: number;
+    month_name: string;
+    year: number;
+  };
+}
+
 export default function SearchClient() {
   const mounted = useMounted();
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<SearchResult | null>(null);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +28,12 @@ export default function SearchClient() {
     try {
       const res = await fetchHijriSearch(date);
       setResult(res.data);
-    } catch (err: any) {
-      setError(err.message || "Gagal melakukan pencarian.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Gagal melakukan pencarian.");
+      } else {
+        setError("Gagal melakukan pencarian.");
+      }
       setResult(null);
     } finally {
       setLoading(false);

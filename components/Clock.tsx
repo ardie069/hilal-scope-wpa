@@ -83,13 +83,7 @@ export default function Clock({ userTimezone }: ClockProps) {
         </div>
 
         <div className="relative z-10 flex flex-col items-center">
-          {/* Header: Label Teknis */}
-          <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
-            <span className="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
-            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-primary">
-              Real-time Chronos
-            </p>
-          </div>
+          {/* Header: Label Teknis dihapus sesuai desain */ }
 
           {/* Jam: Angka Dominan */}
           <div className="mb-4 relative">
@@ -118,13 +112,10 @@ export default function Clock({ userTimezone }: ClockProps) {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </div>
-              <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.3em]">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                 {userTimezone}
               </p>
             </div>
-            <p className="text-[8px] font-bold opacity-30 uppercase tracking-widest leading-relaxed">
-              Syncing with Global Atomic Standards
-            </p>
           </div>
         </div>
       </div>

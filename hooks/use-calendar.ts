@@ -18,7 +18,7 @@ export interface TodayInfo {
  * Tabular Hijri calendar — client-side approximation.
  * Used to build monthly grids without a backend calendar endpoint.
  */
-function getTabularHijriMonths(year: number): UnifiedMonthData[] {
+export function getTabularHijriMonths(year: number): UnifiedMonthData[] {
   return HIJRI_MONTHS_INDONESIA_GRAMMAR.map((m) => {
     // Tabular Hijri: odd months = 30 days, even months = 29 days
     // Last month (12) = 30 days in leap years

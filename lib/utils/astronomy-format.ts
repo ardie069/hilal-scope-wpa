@@ -38,7 +38,7 @@ export function formatSunsetCheck(dateStr: string, tzStr: string): string {
     const utcLabel = utcMatch ? utcMatch[1] : tzStr;
 
     return `${dayName}, ${day} ${month} ${year} - ${time} (${utcLabel})`;
-  } catch (e) {
+  } catch {
     return `${dateStr} (${tzStr})`;
   }
 }

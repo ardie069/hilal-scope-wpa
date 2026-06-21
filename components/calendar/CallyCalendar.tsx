@@ -25,14 +25,16 @@ export default function CallyCalendar({
   children,
   className 
 }: CallyCalendarProps) {
-  const ref = useRef<any>(null);
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    const handleInput = (e: any) => {
-      if (onChange) onChange(e.target.value);
+    const handleInput = (e: Event) => {
+      if (onChange && e.target) {
+        onChange((e.target as HTMLInputElement).value);
+      }
     };
 
     el.addEventListener("change", handleInput);

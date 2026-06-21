@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Moon, Sun, Info, Calendar, Map, Clock, Search } from "lucide-react";
 import { useTheme } from "@/context/theme-context";
 import { useMounted } from "@/hooks/use-mounted";
 
@@ -25,8 +26,8 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-3 active:scale-95 transition-all duration-300 group"
             >
-              <div className="text-3xl sm:text-4xl group-hover:rotate-12 transition-transform duration-500 ease-out">
-                {isDark ? "🌙" : "🕌"}
+              <div className="text-3xl sm:text-4xl group-hover:rotate-12 transition-transform duration-500 ease-out text-primary">
+                {isDark ? <Moon size={36} /> : <Sun size={36} />}
               </div>
               <div className="flex flex-col">
                 <span className="font-black text-lg sm:text-xl tracking-tighter text-gray-900 dark:text-white leading-tight">
@@ -78,9 +79,9 @@ export default function Navbar() {
             >
               {mounted ? (
                 isDark ? (
-                  <span className="text-xl">☀️</span>
+                  <Sun size={20} />
                 ) : (
-                  <span className="text-xl">🌙</span>
+                  <Moon size={20} />
                 )
               ) : (
                 <span className="loading loading-spinner loading-xs opacity-20"></span>
@@ -145,7 +146,7 @@ export default function Navbar() {
                         onClick={() => setIsOpen(false)}
                         className={`flex items-center gap-3 p-4 font-bold rounded-2xl transition-all ${isActive("/moon-info") ? "bg-primary text-white" : "hover:bg-primary/10 hover:text-primary"}`}
                       >
-                        🌙 Info Bulan
+                        <Info size={16} /> Info Bulan
                       </Link>
                     </li>
                     <li className="mt-1">
@@ -154,7 +155,7 @@ export default function Navbar() {
                         onClick={() => setIsOpen(false)}
                         className={`flex items-center gap-3 p-4 font-bold rounded-2xl transition-all ${isActive("/calendar") ? "bg-primary text-white" : "hover:bg-primary/10 hover:text-primary"}`}
                       >
-                        📅 Kalender
+                        <Calendar size={16} /> Kalender
                       </Link>
                     </li>
                     <li className="mt-1">
@@ -163,7 +164,7 @@ export default function Navbar() {
                         onClick={() => setIsOpen(false)}
                         className={`flex items-center gap-3 p-4 font-bold rounded-2xl transition-all ${isActive("/visibility-map") ? "bg-primary text-white" : "hover:bg-primary/10 hover:text-primary"}`}
                       >
-                        🗺️ Peta Visibilitas
+                        <Map size={16} /> Peta Visibilitas
                       </Link>
                     </li>
                     <li className="mt-1">
@@ -172,7 +173,7 @@ export default function Navbar() {
                         onClick={() => setIsOpen(false)}
                         className={`flex items-center gap-3 p-4 font-bold rounded-2xl transition-all ${isActive("/prayer-times") ? "bg-primary text-white" : "hover:bg-primary/10 hover:text-primary"}`}
                       >
-                        🕌 Jadwal Sholat
+                        <Clock size={16} /> Jadwal Sholat
                       </Link>
                     </li>
                     <li className="mt-1">
@@ -181,7 +182,7 @@ export default function Navbar() {
                         onClick={() => setIsOpen(false)}
                         className={`flex items-center gap-3 p-4 font-bold rounded-2xl transition-all ${isActive("/search") ? "bg-primary text-white" : "hover:bg-primary/10 hover:text-primary"}`}
                       >
-                        🔍 Cari Tanggal
+                        <Search size={16} /> Cari Tanggal
                       </Link>
                     </li>
                   </ul>

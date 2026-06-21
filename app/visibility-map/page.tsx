@@ -29,7 +29,14 @@ export default function VisibilityMapPage() {
   const [hijriMonths, setHijriMonths] = useState<HijriMonth[]>([]);
   const [date, setDate] = useState("");
   const [method, setMethod] = useState("KHGT"); // Default to KHGT as requested
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<{
+    points: unknown[];
+    best_location?: { latitude: number; longitude: number };
+    ijtima_time?: string;
+    fajar_nz_time?: string;
+    month_name?: string;
+    year?: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingMonths, setLoadingMonths] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +47,7 @@ export default function VisibilityMapPage() {
       setLoadingMonths(true);
       try {
         const nowResp = await fetchHijriDate(-6.2, 106.8);
-        const { year, month } = nowResp.data.methods.KHGT.hijri_date;
+        const { year } = nowResp.data.methods.KHGT.hijri_date;
 
         const calResp = await fetchHijriCalendar(year, -6.2, 106.8, "KHGT");
         if (calResp.status === "success" && calResp.data?.months) {
@@ -82,7 +89,7 @@ export default function VisibilityMapPage() {
             setDate(obsDate);
           }
         }
-      } catch (err) {
+      } catch {
         setError("Gagal mengambil data kalender Hijriyah.");
       } finally {
         setLoadingMonths(false);
@@ -102,8 +109,12 @@ export default function VisibilityMapPage() {
       } else {
         setError("Gagal memuat data visibilitas.");
       }
-    } catch (err: any) {
-      setError(err.message || "Kesalahan koneksi ke server astronomi.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Kesalahan koneksi ke server astronomi.");
+      } else {
+        setError("Kesalahan koneksi ke server astronomi.");
+      }
     } finally {
       setLoading(false);
     }
