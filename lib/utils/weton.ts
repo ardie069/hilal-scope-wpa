@@ -25,16 +25,31 @@ export function isLocationInJava(lat: number, lon: number): boolean {
 
 /**
  * Menghitung weton Jawa berdasarkan kalender Sultan Agung (1633 M)
- * Basis: 8 Juni 1633 = Jumat Legi
+ * Basis: 8 Juni 1633 = Jumat Legi.
+ * Tanggal dihitung pada zona waktu lokasi (default Asia/Jakarta),
+ * bukan zona waktu browser, agar weton sesuai lokasi pengguna.
  */
-export function getWeton(date: Date = new Date()): string {
+export function getWeton(
+  date: Date = new Date(),
+  timeZone = "Asia/Jakarta",
+): string {
   const PASARAN = ["Legi", "Pahing", "Pon", "Wage", "Kliwon"] as const;
 
   // Basis kalender Jawa: 8 Juni 1633 M (Gregorian)
   const BASE_DATE = new Date(Date.UTC(1633, 6, 8));
 
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+
+  const field: Record<string, string> = {};
+  for (const { type, value } of parts) field[type] = value;
+
   const target = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    Date.UTC(Number(field.year), Number(field.month) - 1, Number(field.day)),
   );
 
   const diffDays =

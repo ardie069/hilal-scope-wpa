@@ -5,7 +5,10 @@ import type {
   MethodResult,
 } from "@/types/hijri";
 import { fetchHijriDate } from "@/lib/api/hijri";
-import { resolveLocationWithFallback } from "@/lib/utils/geolocation";
+import {
+  resolveLocationWithFallback,
+  type ResolvedLocation,
+} from "@/lib/utils/geolocation";
 import { getWeton } from "@/lib/utils/weton";
 
 interface UseHijriResult {
@@ -24,7 +27,7 @@ export function useHijri(selectedMethod: MethodKey): UseHijriResult {
   const [weton, setWeton] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const locRef = useRef<{ lat: number; lon: number } | null>(null);
+  const locRef = useRef<ResolvedLocation | null>(null);
 
   const loadHijri = useCallback(async () => {
     setLoading(true);
@@ -38,9 +41,13 @@ export function useHijri(selectedMethod: MethodKey): UseHijriResult {
       setResponse(apiRes.data);
 
       const now = new Date();
-      const dayName = now.toLocaleDateString("id-ID", { weekday: "long" });
+      const timeZone = loc.timezone ?? "Asia/Jakarta";
+      const dayName = now.toLocaleDateString("id-ID", {
+        weekday: "long",
+        timeZone,
+      });
       const fixDay = dayName === "Minggu" ? "Ahad" : dayName;
-      setWeton(`${fixDay} ${getWeton(now)}`);
+      setWeton(`${fixDay} ${getWeton(now, timeZone)}`);
     } catch (err) {
       setError("Gagal mensinkronkan data dengan posisi benda langit.");
       console.error(err);
