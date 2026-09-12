@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import type { MoonTelemetry } from "@/types/moon";
 import { fetchMoonTelemetry } from "@/lib/api/moon";
-import { resolveLocation } from "@/lib/utils/geolocation";
+import { resolveLocationWithFallback } from "@/lib/utils/geolocation";
 
 interface UseMoonResult {
   data: MoonTelemetry | null;
@@ -24,7 +24,7 @@ export function useMoon(): UseMoonResult {
     setError(null);
 
     try {
-      const loc = await resolveLocation();
+      const loc = await resolveLocationWithFallback();
       setLat(loc.lat);
       setLon(loc.lon);
       const res = await fetchMoonTelemetry(loc.lat, loc.lon);

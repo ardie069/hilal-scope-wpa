@@ -1,11 +1,11 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import type {
   MethodKey,
   HijriResponse,
   MethodResult,
 } from "@/types/hijri";
 import { fetchHijriDate } from "@/lib/api/hijri";
-import { resolveLocation } from "@/lib/utils/geolocation";
+import { resolveLocationWithFallback } from "@/lib/utils/geolocation";
 import { isLocationInJava, getWeton } from "@/lib/utils/weton";
 
 interface UseHijriResult {
@@ -20,34 +20,24 @@ interface UseHijriResult {
 }
 
 export function useHijri(selectedMethod: MethodKey): UseHijriResult {
-  const [lat, setLat] = useState<number | null>(null);
-  const [lon, setLon] = useState<number | null>(null);
-
   const [response, setResponse] = useState<HijriResponse | null>(null);
   const [weton, setWeton] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const locRef = useRef<{ lat: number; lon: number } | null>(null);
 
   const loadHijri = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      let currentLat = lat;
-      let currentLon = lon;
+      const loc =
+        locRef.current ?? (locRef.current = await resolveLocationWithFallback());
 
-      if (currentLat === null || currentLon === null) {
-        const loc = await resolveLocation();
-        currentLat = loc.lat;
-        currentLon = loc.lon;
-        setLat(loc.lat);
-        setLon(loc.lon);
-      }
-
-      const apiRes = await fetchHijriDate(currentLat, currentLon);
+      const apiRes = await fetchHijriDate(loc.lat, loc.lon);
       setResponse(apiRes.data);
 
-      if (isLocationInJava(currentLat, currentLon)) {
+      if (isLocationInJava(loc.lat, loc.lon)) {
         const now = new Date();
         const dayName = now.toLocaleDateString("id-ID", { weekday: "long" });
         const fixDay = dayName === "Minggu" ? "Ahad" : dayName;
@@ -61,7 +51,7 @@ export function useHijri(selectedMethod: MethodKey): UseHijriResult {
     } finally {
       setLoading(false);
     }
-  }, [lat, lon]);
+  }, []);
 
   useEffect(() => {
     loadHijri();

@@ -54,7 +54,12 @@ export default function CalendarDayCell({ day, monthData, selectedMethod, loadin
             {METHODS.map((m) => {
               if (m === selectedMethod) return null;
               const corr = m === "TABULAR" ? dayInfo.tabular : dayInfo.corrections[m];
-              if (!corr || corr.day === displayHijri.day) return null;
+              if (
+                !corr ||
+                (corr.day === displayHijri.day &&
+                  corr.month === displayHijri.month &&
+                  corr.year === displayHijri.year)
+              ) return null;
               return (
                 <div
                   key={m}

@@ -68,13 +68,11 @@ function getGregorianMonths(year: number): UnifiedMonthData[] {
 /** Convert Julian Day Number to Gregorian date string (YYYY-MM-DD) */
 function jdToGregorian(jd: number): string {
   const z = Math.floor(jd + 0.5);
+  const alpha = Math.floor((z - 1867216.25) / 36524.25);
   const a =
     z < 2299161
       ? z
-      : z +
-        1 +
-        Math.floor((Math.floor((z - 1867216.25) / 36524.25) * 3) / 4) * -1 +
-        Math.floor((z - 1867216.25) / 36524.25);
+      : z + 1 + alpha - Math.floor(alpha / 4);
   const b = a + 1524;
   const c = Math.floor((b - 122.1) / 365.25);
   const d = Math.floor(365.25 * c);

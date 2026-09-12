@@ -72,6 +72,8 @@ export function computeODEHPixel(
     [r, g, b] = colors["ODEH_C"]; a = 130;
   } else if (v >= -2.0) {
     [r, g, b] = colors["ODEH_D"]; a = 110;
+  } else {
+    [r, g, b] = colors["E"]; a = 160;
   }
 
   const distToThreshold = Math.min(Math.abs(v - 5.65), Math.abs(v - 2.0), Math.abs(v + 0.96));

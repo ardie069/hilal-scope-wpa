@@ -65,6 +65,7 @@ export function useVisibilityMap() {
     if (!targetDate) return;
     setLoading(true);
     setError(null);
+    setData(null);
     try {
       const resp = await fetchVisibilityMap(targetDate, targetMethod);
       if (resp.status === "success") {

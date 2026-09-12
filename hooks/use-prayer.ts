@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import type { PrayerResponse } from "@/types/prayer";
 import { fetchPrayerTimes } from "@/lib/api/prayer";
-import { resolveLocation } from "@/lib/utils/geolocation";
+import { resolveLocationWithFallback } from "@/lib/utils/geolocation";
 
 interface UsePrayerResult {
   data: PrayerResponse | null;
@@ -23,32 +23,28 @@ export function usePrayer(
   const [error, setError] = useState<string | null>(null);
   const [lat, setLat] = useState<number | null>(null);
   const [lon, setLon] = useState<number | null>(null);
+  const locRef = useRef<{ lat: number; lon: number } | null>(null);
 
   const loadPrayer = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setData(null);
 
     try {
-      let currentLat = lat;
-      let currentLon = lon;
+      const loc =
+        locRef.current ?? (locRef.current = await resolveLocationWithFallback());
 
-      if (currentLat === null || currentLon === null) {
-        const loc = await resolveLocation();
-        currentLat = loc.lat;
-        currentLon = loc.lon;
-        setLat(loc.lat);
-        setLon(loc.lon);
-      }
-
-      const res = await fetchPrayerTimes(currentLat, currentLon, date, method, madhab, highLat);
+      const res = await fetchPrayerTimes(loc.lat, loc.lon, date, method, madhab, highLat);
       setData(res.data);
+      setLat(loc.lat);
+      setLon(loc.lon);
     } catch (err) {
       setError("Gagal mengambil data jadwal sholat.");
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [lat, lon, date, method, madhab, highLat]);
+  }, [date, method, madhab, highLat]);
 
   useEffect(() => {
     loadPrayer();

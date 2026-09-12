@@ -1,34 +1,39 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths, subMonths } from "date-fns";
 import { Info } from "lucide-react";
 import { fetchHijriMonth } from "@/lib/api/calendar";
 import type { MonthDayInfo } from "@/types/calendar";
-import { resolveLocation } from "@/lib/utils/geolocation";
+import { resolveLocationWithFallback } from "@/lib/utils/geolocation";
 import CalendarHeader from "./CalendarHeader";
 import CalendarDayCell from "./CalendarDayCell";
 
 export default function HijriCalendarGrid() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [monthData, setMonthData] = useState<MonthDayInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<string>("KHGT");
   const [mobileViewMode, setMobileViewMode] = useState<"masehi" | "hijri">("hijri");
+  const locRef = useRef<{ lat: number; lon: number } | null>(null);
 
   useEffect(() => {
+    if (!currentDate) {
+      setCurrentDate(new Date());
+      return;
+    }
     const load = async () => {
       setLoading(true);
       setError(null);
       try {
-        const { lat, lon } = await resolveLocation();
+        const loc = locRef.current ?? (locRef.current = await resolveLocationWithFallback());
         const prev = subMonths(currentDate, 1);
         const next = addMonths(currentDate, 1);
         const [resPrev, resCurr, resNext] = await Promise.all([
-          fetchHijriMonth(prev.getFullYear(), prev.getMonth() + 1, lat, lon),
-          fetchHijriMonth(currentDate.getFullYear(), currentDate.getMonth() + 1, lat, lon),
-          fetchHijriMonth(next.getFullYear(), next.getMonth() + 1, lat, lon),
+          fetchHijriMonth(prev.getFullYear(), prev.getMonth() + 1, loc.lat, loc.lon),
+          fetchHijriMonth(currentDate.getFullYear(), currentDate.getMonth() + 1, loc.lat, loc.lon),
+          fetchHijriMonth(next.getFullYear(), next.getMonth() + 1, loc.lat, loc.lon),
         ]);
         const allDays = [...resPrev.data.days, ...resCurr.data.days, ...resNext.data.days];
         const uniqueDays = Array.from(new Map(allDays.map((d) => [d.gregorian_date, d])).values());
@@ -42,6 +47,8 @@ export default function HijriCalendarGrid() {
     };
     load();
   }, [currentDate]);
+
+  if (!currentDate) return null;
 
   const days = eachDayOfInterval({ start: startOfMonth(currentDate), end: endOfMonth(currentDate) });
   const firstDayOfMonth = getDay(startOfMonth(currentDate));
@@ -57,10 +64,10 @@ export default function HijriCalendarGrid() {
   if (mobileViewMode === "hijri" && targetHijri) {
     const hDays = monthData.filter((d) => {
       const h = selectedMethod === "TABULAR" ? d.tabular : d.corrections[selectedMethod];
-      return h.month === targetHijri.month && h.year === targetHijri.year;
+      return h && h.month === targetHijri.month && h.year === targetHijri.year;
     });
     if (hDays.length > 0) {
-      mobileDisplayDays = hDays.map((d) => new Date(d.gregorian_date));
+      mobileDisplayDays = hDays.map((d) => new Date(d.gregorian_date + "T00:00:00"));
       mobileGridFirstDay = getDay(mobileDisplayDays[0]);
     }
   }
@@ -94,8 +101,8 @@ export default function HijriCalendarGrid() {
           selectedMethod={selectedMethod}
           mobileViewMode={mobileViewMode}
           targetHijri={targetHijri}
-          onPrevMonth={() => setCurrentDate((prev) => subMonths(prev, 1))}
-          onNextMonth={() => setCurrentDate((prev) => addMonths(prev, 1))}
+          onPrevMonth={() => setCurrentDate((prev) => (prev ? subMonths(prev, 1) : prev))}
+          onNextMonth={() => setCurrentDate((prev) => (prev ? addMonths(prev, 1) : prev))}
           onMethodChange={setSelectedMethod}
           onMobileViewChange={setMobileViewMode}
         />

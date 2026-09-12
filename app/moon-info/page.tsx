@@ -27,7 +27,7 @@ export default function MoonInfoPage() {
             <MoonVisualizationCard
               illumination={data?.illumination ?? 0}
               phaseName={data?.phase_name ?? "Loading..."}
-              age={(data?.age_hours ?? 0) / 24}
+              age={data?.age_hours ?? 0}
               distance={data?.distance_km ?? 0}
               elongation={data?.elongation ?? 0}
               elongationGeo={data?.elongation_geo}
