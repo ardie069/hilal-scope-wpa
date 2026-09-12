@@ -20,7 +20,7 @@ interface Props {
 
 export default function NavMobileMenu({ isOpen, pathname, onClose, onToggle }: Props) {
   return (
-    <div className="md:hidden relative">
+    <div className="min-[900px]:hidden relative">
       <button
         onClick={onToggle}
         className="btn btn-ghost btn-circle btn-sm hover:bg-primary/10"

@@ -57,7 +57,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex flex-row items-center gap-1 sm:gap-4">
-            <div className="hidden md:flex flex-row items-center gap-2 mr-4 border-r border-gray-100 dark:border-white/10 pr-6">
+            <div className="hidden min-[900px]:flex flex-row items-center gap-2 mr-4 border-r border-gray-100 dark:border-white/10 pr-6">
               {DESKTOP_LINKS.map(({ href, label }) => (
                 <NavLink key={href} href={href} active={pathname === href} label={label} />
               ))}

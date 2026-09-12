@@ -53,7 +53,7 @@ export default function HijriCalendarGrid() {
   const days = eachDayOfInterval({ start: startOfMonth(currentDate), end: endOfMonth(currentDate) });
   const firstDayOfMonth = getDay(startOfMonth(currentDate));
 
-  const pivotDateKey = format(new Date(currentDate.getFullYear(), currentDate.getMonth(), 15), "yyyy-MM-dd");
+  const pivotDateKey = format(currentDate, "yyyy-MM-dd");
   const pivotDayInfo = monthData.find((d) => d.gregorian_date === pivotDateKey);
   const targetHijri = pivotDayInfo
     ? selectedMethod === "TABULAR" ? pivotDayInfo.tabular : pivotDayInfo.corrections[selectedMethod]
@@ -75,7 +75,7 @@ export default function HijriCalendarGrid() {
   const renderGrid = (renderDays: Date[], padDays: number, mode: "masehi" | "hijri", isMobileSpecific: boolean) => (
     <div className={`grid grid-cols-7 gap-1 sm:gap-4 ${isMobileSpecific ? "sm:hidden" : "hidden sm:grid"}`}>
       {Array.from({ length: padDays }).map((_, i) => (
-        <div key={`pad-${i}`} className="aspect-square sm:h-32 rounded-xl sm:rounded-3xl bg-gray-50/50 dark:bg-white/2 opacity-20" />
+        <div key={`pad-${i}`} className="min-h-12 sm:h-32 rounded-xl sm:rounded-3xl bg-gray-50/50 dark:bg-white/2 opacity-20" />
       ))}
       {renderDays.map((day) => (
         <CalendarDayCell

@@ -26,7 +26,7 @@ export default function CalendarDayCell({ day, monthData, selectedMethod, loadin
   return (
     <div
       key={dateKey}
-      className={`aspect-square sm:h-32 p-1 sm:p-5 rounded-xl sm:rounded-3xl border transition-all duration-300 flex flex-col group relative overflow-hidden justify-center sm:justify-between
+      className={`min-h-12 sm:h-32 p-1 sm:p-2 md:p-4 lg:p-5 rounded-xl sm:rounded-3xl border transition-all duration-300 flex flex-col group relative overflow-hidden justify-center sm:justify-between
         ${isToday
           ? "border-primary bg-primary/5 shadow-[0_0_20px_rgba(16,185,129,0.1)]"
           : "border-gray-50 dark:border-white/5 bg-gray-50/30 dark:bg-white/2 hover:border-primary/30 hover:bg-white dark:hover:bg-white/5"
@@ -41,12 +41,12 @@ export default function CalendarDayCell({ day, monthData, selectedMethod, loadin
       </div>
 
       {dayInfo && displayHijri ? (
-        <div className={`flex-col items-center gap-0.5 sm:gap-2 mb-0.5 sm:mb-1 mt-auto sm:mt-0 ${mode === "masehi" ? "hidden sm:flex" : "flex"}`}>
+        <div className={`flex-col items-center gap-0.5 sm:gap-2 mb-0.5 sm:mb-1 mt-auto sm:mt-0 w-full ${mode === "masehi" ? "hidden sm:flex" : "flex"}`}>
           <span className={`text-base sm:text-3xl font-black tabular-nums group-hover:scale-110 transition-transform duration-500 ${colorClass || "text-gray-900 dark:text-white"}`}>
             {displayHijri.day}
           </span>
           {!(isMobileSpecific && mode === "hijri") && (
-            <span className={`text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.15em] opacity-60 group-hover:opacity-100 transition-opacity truncate w-full text-center px-0.5 ${colorClass || "text-gray-600 dark:text-gray-400"}`}>
+            <span className={`text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.08em] opacity-60 group-hover:opacity-100 transition-opacity truncate sm:overflow-visible sm:whitespace-normal sm:leading-tight min-w-full text-center px-0.5 ${colorClass || "text-gray-600 dark:text-gray-400"}`}>
               {getHijriMonthName(displayHijri.month, true)}
             </span>
           )}

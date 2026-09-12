@@ -6,7 +6,7 @@ import type {
 } from "@/types/hijri";
 import { fetchHijriDate } from "@/lib/api/hijri";
 import { resolveLocationWithFallback } from "@/lib/utils/geolocation";
-import { isLocationInJava, getWeton } from "@/lib/utils/weton";
+import { getWeton } from "@/lib/utils/weton";
 
 interface UseHijriResult {
   /** Full multi-method response from API */
@@ -37,14 +37,10 @@ export function useHijri(selectedMethod: MethodKey): UseHijriResult {
       const apiRes = await fetchHijriDate(loc.lat, loc.lon);
       setResponse(apiRes.data);
 
-      if (isLocationInJava(loc.lat, loc.lon)) {
-        const now = new Date();
-        const dayName = now.toLocaleDateString("id-ID", { weekday: "long" });
-        const fixDay = dayName === "Minggu" ? "Ahad" : dayName;
-        setWeton(`${fixDay} ${getWeton(now)}`);
-      } else {
-        setWeton(null);
-      }
+      const now = new Date();
+      const dayName = now.toLocaleDateString("id-ID", { weekday: "long" });
+      const fixDay = dayName === "Minggu" ? "Ahad" : dayName;
+      setWeton(`${fixDay} ${getWeton(now)}`);
     } catch (err) {
       setError("Gagal mensinkronkan data dengan posisi benda langit.");
       console.error(err);
