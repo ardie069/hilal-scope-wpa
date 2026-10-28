@@ -3,6 +3,7 @@
 import { ArrowUpFromLine, Radius, Sunrise, Sunset } from "lucide-react";
 import Metric from "./Metric";
 import StatCard from "./StatCard";
+import MoonPhaseVisualization from "./MoonPhaseVisualization";
 import { formatDegreeDMS, formatMoonAgeHM } from "@/lib/utils/astronomy-format";
 
 interface MoonVisualizationProps {
@@ -30,19 +31,6 @@ export default function MoonVisualizationCard({
   moonset,
   lat = 0,
 }: MoonVisualizationProps) {
-  const isWaning =
-    phaseName.toLowerCase().includes("waning") ||
-    phaseName.toLowerCase().includes("terakhir") ||
-    phaseName.toLowerCase().includes("third");
-
-  const isWaxing = !isWaning;
-
-  const isNorth = lat > 0;
-
-  const lightOnRight = (isNorth && isWaxing) || (!isNorth && isWaning);
-
-  const percentage = illumination / 100;
-
   return (
     <div className="space-y-8 animate-in fade-in duration-1000">
       <div className="bg-white/60 dark:bg-card-dark/40 backdrop-blur-3xl p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-white/40 dark:border-white/5 shadow-soft overflow-hidden relative group transition-all duration-500">
@@ -62,40 +50,7 @@ export default function MoonVisualizationCard({
           </div>
 
           <div className="flex flex-col md:flex-row items-center gap-8 sm:gap-12 md:gap-16 justify-center">
-            <div className="relative w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 shrink-0">
-              <div className="absolute inset-0 bg-primary/20 blur-[80px] rounded-full animate-pulse"></div>
-
-              <div className="relative w-full h-full rounded-full bg-gray-950 shadow-2xl overflow-hidden border border-white/10 flex items-center justify-center">
-                <div className="absolute inset-0 bg-gray-900 shadow-inner"></div>
-
-                {/* Sisi Terang */}
-                <div
-                  className={`absolute w-1/2 h-full bg-gray-100 shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-1000
-                    ${lightOnRight ? "right-0" : "left-0"}`}
-                ></div>
-
-                {/* Elips Terminator: Inti dari visualisasi fase */}
-                <div
-                  className={`absolute h-[101%] rounded-full transition-all duration-1000 ease-in-out
-                    ${illumination < 50 ? "bg-gray-900" : "bg-gray-100"}`}
-                  style={{
-                    width: "100%",
-                    transform: `scaleX(${Math.abs(1 - percentage * 2)})`,
-                    zIndex: 10,
-                  }}
-                ></div>
-
-                <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/pollen.png')] mix-blend-overlay"></div>
-                <div className="absolute inset-0 bg-linear-to-tr from-black/40 via-transparent to-white/10 rounded-full"></div>
-              </div>
-
-              <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2 bg-white/90 dark:bg-black/50 backdrop-blur px-3 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-800">
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                <span className="text-[10px] font-black uppercase tracking-widest">
-                  Live
-                </span>
-              </div>
-            </div>
+            <MoonPhaseVisualization illumination={illumination} phaseName={phaseName} lat={lat} />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4 sm:gap-y-10 sm:gap-x-8 w-full max-w-sm">
               <Metric
